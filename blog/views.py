@@ -17,8 +17,6 @@ def post_list(request):
 
 def post_detail(request, pk):
    post = get_object_or_404(Post, pk=pk)
-   print "pk = %s"%post.pk
-   print post
    return render(request, 'blog/post_detail.html', {'post':post})
 
 def post_new(request):
@@ -56,3 +54,8 @@ def post_publish(request, pk):
    post = get_object_or_404(Post, pk=pk)
    post.publish()
    return redirect('post_detail', pk=pk)
+
+def post_remove(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.delete()
+    return redirect('post_list')
