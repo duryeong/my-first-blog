@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import PostForm, CommentForm
 from .models import Post, Comment
+from .decorators import user_is_entry_author
 
 
 def post_list(request):
@@ -35,6 +36,7 @@ def post_new(request):
    return render(request, 'blog/post_edit.html', {'form': form})
 
 @login_required
+@user_is_entry_author
 def post_edit(request, pk):
    post = get_object_or_404(Post, pk=pk)
    if request.method == "POST":
@@ -61,6 +63,7 @@ def post_publish(request, pk):
    return redirect('post_detail', pk=pk)
 
 @login_required
+@user_is_entry_author
 def post_remove(request, pk):
    post = get_object_or_404(Post, pk=pk)
    post.delete()
@@ -88,6 +91,7 @@ def comment_approve(request, pk):
    return redirect('post_detail', pk=comment.post.pk)
 
 @login_required
+@user_is_entry_author
 def comment_remove(request, pk):
    comment = get_object_or_404(Comment, pk=pk)
    post_pk = comment.post.pk
