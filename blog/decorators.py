@@ -5,6 +5,8 @@ Created on 2017. 4. 24.
 '''
 
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
+
 from .models import Post
 
 def user_is_entry_author(function):
@@ -13,7 +15,8 @@ def user_is_entry_author(function):
       if post.author == request.user:
          return function(request, *args, **kwargs)
       else:
-         raise PermissionDenied
+#          raise PermissionDenied
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
       
    wrap.__doc__ = function.__doc__
    wrap.__name__ = function.__name__
