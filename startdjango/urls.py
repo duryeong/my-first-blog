@@ -17,11 +17,16 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 from django.contrib.auth import views
+from django.views.generic import TemplateView
+from blog.views import DuplicationCheck
+from blog import views as bv
 
 urlpatterns = [
    url(r'^admin/', admin.site.urls),
    url(r'^accounts/login/$', views.login, name='login'),
-#    url(r'^accounts/login/$', views.login, {'template_name': 'registration/login.html'}, name='login'),
+   url(r'^signup/$',bv.signup, name='signup'),
+   url(r'^signup_ok/$',TemplateView.as_view(template_name='registration/signup_ok.html'), name='signup_ok'),
+   url(r'^duplcheck$', DuplicationCheck.as_view(), name='duplcheck'),
    url(r'^accounts/logout/$', views.logout, name='logout', kwargs={'next_page': '/'}),
    url(r'', include('blog.urls')),
 ]

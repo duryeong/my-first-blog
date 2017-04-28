@@ -1,18 +1,28 @@
+#-*-coding: utf-8 -*-
+
 '''
 Created on 2017. 4. 17.
 
 @author: mshan
 '''
 
+#회원가입
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
+from django.views.generic.base import View
 
-from .forms import PostForm, CommentForm
-from .models import Post, Comment
 from .decorators import user_is_entry_author
+from .forms import PostForm, CommentForm
+from .forms import RegisterForm
+from .models import Post, Comment
 
 
+# ajax
 def post_list(request):
    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
    return render(request, 'blog/post_list.html', {'posts':posts})
@@ -97,3 +107,27 @@ def comment_remove(request, pk):
    post_pk = comment.post.pk
    comment.delete()
    return redirect('post_detail', pk=post_pk)
+
+def signup(request):
+    """signsup
+    to register users
+    """
+    if request.method == "POST":
+        userform = RegisterForm(request.POST)
+        if userform.is_valid():
+            userform.save()
+            return HttpResponseRedirect(
+                reverse("signup_ok")
+            )
+    elif request.method =="GET":
+        userform = RegisterForm()
+    return render(request, "registration/signup.html", {"userform": userform,})
+
+class DuplicationCheck(View):
+    def post(self, request):
+        # user = get_object_or_404(User, username=username)
+        username = request.POST.get('username', None)
+        data = {
+            'is_taken': User.objects.filter(username__iexact=username).exists()
+            }
+        return JsonResponse(data)

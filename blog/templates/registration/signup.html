@@ -1,0 +1,12 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+		<form id="signup" method="post" action="{% url 'signup' %}">{% csrf_token %}
+			<div class="input-group">
+			{{ userform.username }}<button type="button" id="duplcheck" class="btn btn-default">중복확인</button><br>
+			{{ userform.email }}<br>
+			{{ userform.password1 }}<br>
+			{{ userform.password2 }}<br>
+			<button type="submit" id="submit" class="btn btn-success">회원가입</button>
+		</div>
+{% endblock %}
